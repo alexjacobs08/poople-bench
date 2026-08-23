@@ -1,6 +1,258 @@
 {
  "days": [
   {
+   "date": "2025-08-16",
+   "index": 2,
+   "word": "opts",
+   "par": 6,
+   "file": "daily/2025-08-16.json"
+  },
+  {
+   "date": "2025-08-28",
+   "index": 14,
+   "word": "half",
+   "par": 5,
+   "file": "daily/2025-08-28.json"
+  },
+  {
+   "date": "2025-08-30",
+   "index": 16,
+   "word": "year",
+   "par": 5,
+   "file": "daily/2025-08-30.json"
+  },
+  {
+   "date": "2025-09-02",
+   "index": 19,
+   "word": "wing",
+   "par": 7,
+   "file": "daily/2025-09-02.json"
+  },
+  {
+   "date": "2025-09-03",
+   "index": 20,
+   "word": "fart",
+   "par": 5,
+   "file": "daily/2025-09-03.json"
+  },
+  {
+   "date": "2025-09-11",
+   "index": 28,
+   "word": "thus",
+   "par": 7,
+   "file": "daily/2025-09-11.json"
+  },
+  {
+   "date": "2025-09-28",
+   "index": 45,
+   "word": "dual",
+   "par": 5,
+   "file": "daily/2025-09-28.json"
+  },
+  {
+   "date": "2025-09-30",
+   "index": 47,
+   "word": "fats",
+   "par": 5,
+   "file": "daily/2025-09-30.json"
+  },
+  {
+   "date": "2025-10-05",
+   "index": 52,
+   "word": "pans",
+   "par": 5,
+   "file": "daily/2025-10-05.json"
+  },
+  {
+   "date": "2025-10-07",
+   "index": 54,
+   "word": "wipe",
+   "par": 5,
+   "file": "daily/2025-10-07.json"
+  },
+  {
+   "date": "2025-10-10",
+   "index": 57,
+   "word": "area",
+   "par": 8,
+   "file": "daily/2025-10-10.json"
+  },
+  {
+   "date": "2025-10-18",
+   "index": 65,
+   "word": "sang",
+   "par": 6,
+   "file": "daily/2025-10-18.json"
+  },
+  {
+   "date": "2025-10-19",
+   "index": 66,
+   "word": "fast",
+   "par": 5,
+   "file": "daily/2025-10-19.json"
+  },
+  {
+   "date": "2025-10-20",
+   "index": 67,
+   "word": "stud",
+   "par": 6,
+   "file": "daily/2025-10-20.json"
+  },
+  {
+   "date": "2025-11-12",
+   "index": 90,
+   "word": "harm",
+   "par": 6,
+   "file": "daily/2025-11-12.json"
+  },
+  {
+   "date": "2025-11-14",
+   "index": 92,
+   "word": "nips",
+   "par": 6,
+   "file": "daily/2025-11-14.json"
+  },
+  {
+   "date": "2025-11-15",
+   "index": 93,
+   "word": "sank",
+   "par": 5,
+   "file": "daily/2025-11-15.json"
+  },
+  {
+   "date": "2025-11-24",
+   "index": 102,
+   "word": "jail",
+   "par": 5,
+   "file": "daily/2025-11-24.json"
+  },
+  {
+   "date": "2025-11-28",
+   "index": 106,
+   "word": "hare",
+   "par": 5,
+   "file": "daily/2025-11-28.json"
+  },
+  {
+   "date": "2025-12-01",
+   "index": 109,
+   "word": "dude",
+   "par": 6,
+   "file": "daily/2025-12-01.json"
+  },
+  {
+   "date": "2025-12-02",
+   "index": 110,
+   "word": "harp",
+   "par": 5,
+   "file": "daily/2025-12-02.json"
+  },
+  {
+   "date": "2025-12-08",
+   "index": 116,
+   "word": "jets",
+   "par": 5,
+   "file": "daily/2025-12-08.json"
+  },
+  {
+   "date": "2025-12-20",
+   "index": 128,
+   "word": "rife",
+   "par": 6,
+   "file": "daily/2025-12-20.json"
+  },
+  {
+   "date": "2025-12-25",
+   "index": 133,
+   "word": "welt",
+   "par": 5,
+   "file": "daily/2025-12-25.json"
+  },
+  {
+   "date": "2026-01-12",
+   "index": 151,
+   "word": "apex",
+   "par": 7,
+   "file": "daily/2026-01-12.json"
+  },
+  {
+   "date": "2026-01-24",
+   "index": 163,
+   "word": "pink",
+   "par": 6,
+   "file": "daily/2026-01-24.json"
+  },
+  {
+   "date": "2026-01-26",
+   "index": 165,
+   "word": "ping",
+   "par": 6,
+   "file": "daily/2026-01-26.json"
+  },
+  {
+   "date": "2026-02-03",
+   "index": 173,
+   "word": "writ",
+   "par": 6,
+   "file": "daily/2026-02-03.json"
+  },
+  {
+   "date": "2026-02-11",
+   "index": 181,
+   "word": "quay",
+   "par": 9,
+   "file": "daily/2026-02-11.json"
+  },
+  {
+   "date": "2026-02-21",
+   "index": 191,
+   "word": "alas",
+   "par": 8,
+   "file": "daily/2026-02-21.json"
+  },
+  {
+   "date": "2026-03-03",
+   "index": 201,
+   "word": "pong",
+   "par": 5,
+   "file": "daily/2026-03-03.json"
+  },
+  {
+   "date": "2026-03-18",
+   "index": 216,
+   "word": "ties",
+   "par": 6,
+   "file": "daily/2026-03-18.json"
+  },
+  {
+   "date": "2026-04-01",
+   "index": 230,
+   "word": "muse",
+   "par": 6,
+   "file": "daily/2026-04-01.json"
+  },
+  {
+   "date": "2026-04-03",
+   "index": 232,
+   "word": "levy",
+   "par": 8,
+   "file": "daily/2026-04-03.json"
+  },
+  {
+   "date": "2026-04-09",
+   "index": 238,
+   "word": "lame",
+   "par": 5,
+   "file": "daily/2026-04-09.json"
+  },
+  {
+   "date": "2026-04-28",
+   "index": 257,
+   "word": "walk",
+   "par": 5,
+   "file": "daily/2026-04-28.json"
+  },
+  {
    "date": "2026-08-23",
    "index": 374,
    "word": "girl",
