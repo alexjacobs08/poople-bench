@@ -11,7 +11,10 @@
   --page: #f9f9f7; --surface: #fcfcfb;
   --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
   --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
-  --series: #2a78d6; --dim: #a9b7c9;
+  --series: #2a78d6;
+  --lab-xai: #2a78d6; --lab-meta: #eb6834; --lab-openai: #1baf7a;
+  --lab-deepseek: #eda100; --lab-anthropic: #e87ba4; --lab-google: #008300;
+  --lab-moonshot: #4a3aa7; --lab-qwen: #e34948; --lab-mistral: #898781;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -19,7 +22,10 @@
     --page: #0d0d0d; --surface: #1a1a19;
     --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
     --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
-    --series: #3987e5; --dim: #47566b;
+    --series: #3987e5;
+    --lab-xai: #3987e5; --lab-meta: #d95926; --lab-openai: #199e70;
+    --lab-deepseek: #c98500; --lab-anthropic: #d55181; --lab-google: #008300;
+    --lab-moonshot: #9085e9; --lab-qwen: #e66767; --lab-mistral: #898781;
   }
 }
 :root[data-theme="dark"] {
@@ -27,7 +33,10 @@
   --page: #0d0d0d; --surface: #1a1a19;
   --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
   --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
-  --series: #3987e5; --dim: #47566b;
+  --series: #3987e5;
+  --lab-xai: #3987e5; --lab-meta: #d95926; --lab-openai: #199e70;
+  --lab-deepseek: #c98500; --lab-anthropic: #d55181; --lab-google: #008300;
+  --lab-moonshot: #9085e9; --lab-qwen: #e66767; --lab-mistral: #898781;
 }
 * { box-sizing: border-box; }
 body {
@@ -44,33 +53,36 @@ header .today { color: var(--muted); font-size: 13px; }
 }
 .card h2 { font-size: 17px; margin: 0 0 2px; }
 .card .note { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
-.filters { display: flex; gap: 8px; margin: 10px 0 4px; }
+.filters { display: flex; gap: 8px; margin: 10px 0 4px; flex-wrap: wrap; }
 .filters button {
   font: inherit; font-size: 13px; color: var(--ink-2);
   background: none; border: 1px solid var(--border); border-radius: 999px;
   padding: 3px 12px; cursor: pointer;
 }
 .filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--series); font-weight: 600; }
-.chartbox { position: relative; overflow-x: auto; }
+.legend { display: flex; gap: 4px 14px; flex-wrap: wrap; margin: 6px 0 0; font-size: 12.5px; color: var(--ink-2); }
+.legend .item { display: inline-flex; align-items: center; gap: 5px; }
+.legend .chip { width: 9px; height: 9px; border-radius: 50%; }
+.chartbox { position: relative; }
+#scatter { width: 100%; height: auto; display: block; }
 svg text { font: 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; }
 .tooltip {
   position: absolute; pointer-events: none; display: none; z-index: 3;
   background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
   box-shadow: 0 4px 14px rgba(0,0,0,.18); padding: 8px 10px; font-size: 12.5px;
-  min-width: 170px;
+  min-width: 185px;
 }
 .tooltip b { display: block; margin-bottom: 2px; }
 .tooltip .row { display: flex; justify-content: space-between; gap: 14px; color: var(--ink-2); }
 .tooltip .row span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
 .tablebox { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-th, td { padding: 6px 10px; text-align: right; white-space: nowrap; }
-th:first-child, td:first-child, th:nth-child(2), td:nth-child(2),
-th:nth-child(3), td:nth-child(3) { text-align: left; }
+th, td { padding: 6px 9px; text-align: right; white-space: nowrap; }
+th:nth-child(-n+3), td:nth-child(-n+3) { text-align: left; }
 thead th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--axis); font-size: 12px; }
 tbody td { border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
 tbody tr:hover { background: color-mix(in srgb, var(--series) 7%, transparent); }
-.frontier-chip { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--series); margin-right:6px; vertical-align: 1px; }
+.lab-chip { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
 select {
   font: inherit; font-size: 13.5px; color: var(--ink); background: var(--surface);
   border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
@@ -98,15 +110,16 @@ footer a, header a { color: var(--series); }
   <section class="card">
     <h2>Score vs cost</h2>
     <p class="note">Mean score (par ÷ steps; invalid = 0) vs mean cost per attempt.
-      Filled points are the Pareto frontier; hollow points are dominated. Hover for detail.</p>
+      Ringed points are the Pareto frontier — no cheaper model scores higher. Hover for detail.</p>
     <div class="filters" id="window-filter" role="group" aria-label="Time window">
       <button aria-pressed="true" data-window="all">All time</button>
       <button aria-pressed="false" data-window="rolling30">Last 30 days</button>
     </div>
     <div class="chartbox">
-      <svg id="scatter" width="920" height="470" viewBox="0 0 920 470" role="img" aria-label="Scatter plot of model score versus cost per attempt"></svg>
+      <svg id="scatter" viewBox="0 0 920 500" role="img" aria-label="Scatter plot of model score versus cost per attempt, colored by lab"></svg>
       <div class="tooltip" id="tip"></div>
     </div>
+    <div class="legend" id="legend"></div>
   </section>
 
   <section class="card">
@@ -115,7 +128,8 @@ footer a, header a { color: var(--series); }
     <div class="tablebox"><table id="board">
       <thead><tr>
         <th>#</th><th>Model</th><th>Lab</th><th>Score</th><th>Solve rate</th>
-        <th>Avg +par</th><th>Invalid</th><th>$/attempt</th><th>$/solve</th><th>Days</th>
+        <th>Avg +par</th><th>Invalid</th><th>Effort</th><th>Think tok</th>
+        <th>$/attempt</th><th>$/solve</th><th>Days</th>
       </tr></thead>
       <tbody></tbody>
     </table></div>
@@ -132,8 +146,9 @@ footer a, header a { color: var(--series); }
     <p><b>Method.</b> One-shot, open book: each model receives the day's start word plus the full
     2,398-word legal list (harvested from the game itself) and returns a whole ladder in one
     response — no tools, no feedback, k=3 trials daily (k=1 for backfilled days), provider-default
-    sampling, reasoning effort pinned per model. Score = par ÷ steps for a legal ladder, 0 for an
-    illegal one; par is verified independently by BFS. Costs are exact per-request charges
+    sampling. "Effort" is the pinned reasoning-effort setting (models without a medium tier run
+    their middle one; blank = no reasoning parameter). Score = par ÷ steps for a legal ladder, 0
+    for an illegal one; par is verified independently by BFS. Costs are exact per-request charges
     reported by OpenRouter. API failures are excluded from scores. Daily rankings are
     entertainment; trust the rolling window.
     Source &amp; data: <a href="https://github.com/alexjacobs08/poople-bench">github.com/alexjacobs08/poople-bench</a>.</p>
@@ -141,13 +156,19 @@ footer a, header a { color: var(--series); }
 </div>
 
 <script>
+const LAB_VAR = {
+  "xAI": "--lab-xai", "Meta": "--lab-meta", "OpenAI": "--lab-openai",
+  "DeepSeek": "--lab-deepseek", "Anthropic": "--lab-anthropic", "Google": "--lab-google",
+  "Moonshot": "--lab-moonshot", "Qwen": "--lab-qwen", "Mistral": "--lab-mistral",
+};
+const labColor = lab => `var(${LAB_VAR[lab] || "--muted"})`;
 const fmt = {
   pct: v => (v * 100).toFixed(1) + "%",
   cost: v => v == null ? "—" : v >= 0.095 ? "$" + v.toFixed(2) : v >= 0.0095 ? (v * 100).toFixed(1) + "¢" : (v * 100).toFixed(2) + "¢",
   plus: v => v == null ? "—" : "+" + v.toFixed(2),
+  tok: v => v == null ? "—" : v >= 1000 ? (v / 1000).toFixed(1) + "k" : String(v),
 };
 let board = null, manifest = null, windowKey = "all";
-
 const metric = (row, key) => key === "all" ? row : row.rolling30;
 
 function paretoFrontier(points) {
@@ -155,6 +176,27 @@ function paretoFrontier(points) {
   const frontier = []; let best = -1;
   for (const p of sorted) if (p.y > best) { frontier.push(p); best = p.y; }
   return new Set(frontier.map(p => p.id));
+}
+
+// Greedy label placement: prefer right-of-point; nudge vertically on overlap,
+// flip to left-of-point if the right side is crowded or clipped.
+function placeLabels(pts, X, Y, W) {
+  const placed = [];
+  const overlaps = r => placed.some(q => r.x < q.x + q.w && r.x + r.w > q.x && r.y < q.y + q.h && r.y + r.h > q.y);
+  for (const p of [...pts].sort((a, b) => a.y - b.y)) {
+    const w = p.label.length * 6.1 + 4, h = 13;
+    let best = null;
+    outer:
+    for (const side of [1, -1]) {
+      for (const dy of [0, -14, 14, -28, 28, -42, 42]) {
+        const x = side === 1 ? X(p.x) + 10 : X(p.x) - 10 - w;
+        const rect = { x, y: Y(p.y) + dy - 9, w, h };
+        if (rect.x < 2 || rect.x + rect.w > W - 2) continue;
+        if (!overlaps(rect)) { best = { rect, side, dy }; break outer; }
+      }
+    }
+    if (best) { placed.push(best.rect); p.labelPos = best; }
+  }
 }
 
 function drawScatter() {
@@ -166,12 +208,12 @@ function drawScatter() {
     .filter(({ m }) => m.n_attempts - m.n_api_errors > 0 && m.mean_cost_per_attempt > 0);
   if (!rows.length) return;
   const pts = rows.map(({ r, m }) => ({
-    id: r.model, label: r.label, lab: r.lab,
+    id: r.model, label: r.label, lab: r.lab, effort: r.reasoning_effort,
     x: m.mean_cost_per_attempt, y: m.avg_score, m,
   }));
-  const M = { l: 62, r: 30, t: 16, b: 46 }, W = 920, H = 470;
+  const M = { l: 62, r: 24, t: 20, b: 48 }, W = 920, H = 500;
   const xs = pts.map(p => p.x);
-  const xmin = Math.min(...xs) / 1.6, xmax = Math.max(...xs) * 1.6;
+  const xmin = Math.min(...xs) / 1.8, xmax = Math.max(...xs) * 1.8;
   const X = v => M.l + (Math.log10(v) - Math.log10(xmin)) / (Math.log10(xmax) - Math.log10(xmin)) * (W - M.l - M.r);
   const Y = v => H - M.b - v * (H - M.t - M.b);
   const NS = "http://www.w3.org/2000/svg";
@@ -180,7 +222,6 @@ function drawScatter() {
     for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
     (parent || svg).appendChild(node); return node;
   };
-  // gridlines + axes
   for (const t of [0, 0.25, 0.5, 0.75, 1]) {
     el("line", { x1: M.l, x2: W - M.r, y1: Y(t), y2: Y(t), stroke: "var(--grid)", "stroke-width": 1 });
     const lbl = el("text", { x: M.l - 8, y: Y(t) + 4, "text-anchor": "end", fill: "var(--muted)" });
@@ -197,15 +238,14 @@ function drawScatter() {
   xt.textContent = "cost per attempt (log scale)";
   const yt = el("text", { x: 14, y: (M.t + H - M.b) / 2, fill: "var(--ink-2)", transform: `rotate(-90 14 ${(M.t + H - M.b) / 2})`, "text-anchor": "middle" });
   yt.textContent = "score (par ÷ steps)";
-  // frontier step line
+
   const frontier = paretoFrontier(pts);
   const fpts = pts.filter(p => frontier.has(p.id)).sort((a, b) => a.x - b.x);
   let d = "";
-  fpts.forEach((p, i) => {
-    d += (i === 0 ? `M ${X(p.x)} ${Y(p.y)}` : ` H ${X(p.x)} V ${Y(p.y)}`);
-  });
-  if (fpts.length > 1) el("path", { d, fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-opacity": 0.45 });
-  // points (dominated first so frontier renders on top)
+  fpts.forEach((p, i) => { d += (i === 0 ? `M ${X(p.x)} ${Y(p.y)}` : ` H ${X(p.x)} V ${Y(p.y)}`); });
+  if (fpts.length > 1) el("path", { d, fill: "none", stroke: "var(--axis)", "stroke-width": 1.5, "stroke-dasharray": "5 4" });
+
+  placeLabels(pts, X, Y, W);
   const show = (p, node) => {
     const box = svg.parentElement.getBoundingClientRect();
     const rect = node.getBoundingClientRect();
@@ -214,22 +254,38 @@ function drawScatter() {
       <div class="row"><span>score</span><span>${fmt.pct(p.y)}</span></div>
       <div class="row"><span>solve rate</span><span>${fmt.pct(p.m.solve_rate)}</span></div>
       <div class="row"><span>avg +par (solved)</span><span>${fmt.plus(p.m.mean_over_par_solved)}</span></div>
+      <div class="row"><span>reasoning effort</span><span>${p.effort ?? "—"}</span></div>
+      <div class="row"><span>avg think tokens</span><span>${fmt.tok(p.m.mean_reasoning_tokens)}</span></div>
       <div class="row"><span>cost / attempt</span><span>${fmt.cost(p.x)}</span></div>
       <div class="row"><span>attempts</span><span>${p.m.n_attempts - p.m.n_api_errors}</span></div>`;
     const x = rect.left - box.left + 14, y = rect.top - box.top - 10;
-    tip.style.left = Math.min(x, box.width - 200) + "px";
-    tip.style.top = Math.max(y - 60, 4) + "px";
+    tip.style.left = Math.min(x, box.width - 210) + "px";
+    tip.style.top = Math.max(y - 70, 4) + "px";
   };
   for (const p of [...pts.filter(p => !frontier.has(p.id)), ...fpts]) {
     const isF = frontier.has(p.id);
+    if (isF) el("circle", { cx: X(p.x), cy: Y(p.y), r: 10, fill: "none", stroke: labColor(p.lab), "stroke-width": 1.5, "stroke-opacity": 0.55 });
     const dot = el("circle", {
-      cx: X(p.x), cy: Y(p.y), r: isF ? 6 : 5,
-      fill: isF ? "var(--series)" : "none",
-      stroke: isF ? "var(--surface)" : "var(--dim)",
-      "stroke-width": 2, tabindex: 0,
+      cx: X(p.x), cy: Y(p.y), r: 6,
+      fill: labColor(p.lab), "fill-opacity": isF ? 1 : 0.55,
+      stroke: "var(--surface)", "stroke-width": 2, tabindex: 0,
     });
-    if (isF) {
-      const lbl = el("text", { x: X(p.x) + 9, y: Y(p.y) - 8, fill: "var(--ink)", "font-weight": 600 });
+    if (p.labelPos) {
+      const { side, dy } = p.labelPos;
+      if (dy !== 0 || side === -1) {
+        el("line", {
+          x1: X(p.x) + side * 7, y1: Y(p.y) + dy * 0.6,
+          x2: side === 1 ? p.labelPos.rect.x - 2 : p.labelPos.rect.x + p.labelPos.rect.w + 2,
+          y2: Y(p.y) + dy, stroke: "var(--axis)", "stroke-width": 0.75,
+        });
+      }
+      const lbl = el("text", {
+        x: side === 1 ? p.labelPos.rect.x : p.labelPos.rect.x + p.labelPos.rect.w,
+        y: Y(p.y) + dy + 4,
+        "text-anchor": side === 1 ? "start" : "end",
+        fill: isF ? "var(--ink)" : "var(--ink-2)",
+        "font-weight": isF ? 600 : 400,
+      });
       lbl.textContent = p.label;
     }
     const target = el("circle", { cx: X(p.x), cy: Y(p.y), r: 13, fill: "transparent", cursor: "pointer" });
@@ -240,6 +296,10 @@ function drawScatter() {
       node.addEventListener("blur", () => (tip.style.display = "none"));
     }
   }
+  const legend = document.getElementById("legend");
+  const labs = [...new Set(pts.map(p => p.lab))].sort();
+  legend.innerHTML = labs.map(l =>
+    `<span class="item"><span class="chip" style="background:${labColor(l)}"></span>${l}</span>`).join("");
 }
 
 function drawBoard() {
@@ -249,22 +309,20 @@ function drawBoard() {
     .map(r => ({ r, m: metric(r, windowKey) }))
     .filter(({ m }) => m.n_attempts > 0)
     .sort((a, b) => b.m.avg_score - a.m.avg_score);
-  const frontier = paretoFrontier(rows
-    .filter(({ m }) => m.mean_cost_per_attempt > 0)
-    .map(({ r, m }) => ({ id: r.model, x: m.mean_cost_per_attempt, y: m.avg_score })));
   document.getElementById("board-note").textContent =
-    windowKey === "all"
-      ? `All ${board.n_days} benchmarked days. Blue dot = Pareto frontier (no cheaper model scores higher).`
-      : "Rolling 30-day window. Blue dot = Pareto frontier (no cheaper model scores higher).";
+    (windowKey === "all" ? `All ${board.n_days} benchmarked days. ` : "Rolling 30-day window. ") +
+    "Score = mean of par ÷ steps (invalid = 0) over scored attempts.";
   rows.forEach(({ r, m }, i) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${i + 1}</td>
-      <td>${frontier.has(r.model) ? '<span class="frontier-chip"></span>' : ""}${r.label}</td>
+      <td><span class="lab-chip" style="background:${labColor(r.lab)}"></span>${r.label}</td>
       <td>${r.lab}</td>
       <td><b>${fmt.pct(m.avg_score)}</b></td>
       <td>${fmt.pct(m.solve_rate)}</td>
       <td>${fmt.plus(m.mean_over_par_solved)}</td>
       <td>${fmt.pct(m.invalid_rate)}</td>
+      <td>${r.reasoning_effort ?? "—"}</td>
+      <td>${fmt.tok(m.mean_reasoning_tokens)}</td>
       <td>${fmt.cost(m.mean_cost_per_attempt)}</td>
       <td>${fmt.cost(m.cost_per_solve)}</td>
       <td>${m.n_days}</td>`;
@@ -282,14 +340,14 @@ async function drawDay(file) {
   for (const [model, attempts] of Object.entries(byModel).sort()) {
     const row = document.createElement("div");
     row.className = "day-attempt";
-    const label = (board.models.find(m => m.model === model) || { label: model }).label;
+    const meta = board.models.find(m => m.model === model) || { label: model, lab: "" };
     const lines = attempts.sort((a, b) => a.trial - b.trial).map(a => {
       if (a.error) return `<span class="bad">trial ${a.trial}: API error</span>`;
       if (!a.valid) return `<span class="bad">trial ${a.trial}: invalid (${a.failure})</span>`;
       const ladder = a.ladder.map(w => `<span class="step">${w}</span>`).join(" → ");
       return `<span class="ok">trial ${a.trial}: +${a.over_par}</span> <span class="ladder">${ladder}</span> <span class="bad">${fmt.cost(a.cost)}</span>`;
     });
-    row.innerHTML = `<b>${label}</b><br>${lines.join("<br>")}`;
+    row.innerHTML = `<b><span class="lab-chip" style="background:${labColor(meta.lab)}"></span>${meta.label}</b><br>${lines.join("<br>")}`;
     detail.appendChild(row);
   }
 }

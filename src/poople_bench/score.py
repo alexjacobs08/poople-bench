@@ -26,9 +26,11 @@ def _metrics(attempts: list[dict[str, Any]]) -> dict[str, Any]:
     scored = [a for a in attempts if a.get("error") is None]
     solved = [a for a in scored if a["valid"]]
     costs = [a["cost"] for a in attempts if a.get("cost") is not None]
+    rtoks = [a["reasoning_tokens"] for a in scored if a.get("reasoning_tokens")]
     dates = {a["date"] for a in scored}
     total_cost = sum(costs)
     return {
+        "mean_reasoning_tokens": round(mean(rtoks)) if rtoks else None,
         "n_days": len(dates),
         "n_attempts": len(attempts),
         "n_api_errors": len(attempts) - len(scored),
@@ -66,7 +68,11 @@ def aggregate(day_docs: list[dict[str, Any]]) -> dict[str, Any]:
         try:
             m = model_by_id(model_id)
             label, lab = m.label, m.lab
-            pricing = {"input_per_m": m.input_per_m, "output_per_m": m.output_per_m}
+            pricing = {
+                "input_per_m": m.input_per_m,
+                "output_per_m": m.output_per_m,
+                "reasoning_effort": m.reasoning_effort,
+            }
         except KeyError:
             label, lab, pricing = model_id, "?", {}
         recent = [a for a in attempts if cutoff and a["date"] >= cutoff]

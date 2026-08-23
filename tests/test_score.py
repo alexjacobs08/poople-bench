@@ -73,7 +73,17 @@ def test_toplevel():
     assert board["prompt_versions"] == ["1"]
 
 
+def test_metrics_include_reasoning_tokens():
+    docs = [dict(DOCS[1], attempts=[
+        dict(_attempt("2026-08-02", "m1", 0, valid=True, score=1.0, cost=0.01, over_par=0), reasoning_tokens=1000),
+        dict(_attempt("2026-08-02", "m1", 1, valid=True, score=1.0, cost=0.01, over_par=0), reasoning_tokens=3000),
+    ])]
+    row = aggregate(docs)["models"][0]
+    assert row["mean_reasoning_tokens"] == 2000
+
+
 def test_known_model_gets_roster_metadata():
     docs = [dict(DOCS[1], attempts=[_attempt("2026-08-02", "x-ai/grok-4.6", 0, valid=True, score=1.0, cost=0.01, over_par=0)])]
     row = aggregate(docs)["models"][0]
     assert row["label"] == "Grok 4.6" and row["lab"] == "xAI"
+    assert row["reasoning_effort"] == "medium"
