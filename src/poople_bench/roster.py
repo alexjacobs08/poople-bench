@@ -42,8 +42,14 @@ MODELS: list[Model] = [
     Model(id="moonshotai/kimi-k2.6", label="Kimi K2.6", lab="Moonshot", input_per_m=0.541, output_per_m=2.28, reasoning_effort=None),
     Model(id="mistralai/mistral-medium-3-5", label="Mistral Medium 3.5", lab="Mistral", input_per_m=1.5, output_per_m=7.5, reasoning_effort="high"),
     Model(id="mistralai/mistral-small-2603", label="Mistral Small 26.03", lab="Mistral", input_per_m=0.15, output_per_m=0.6, reasoning_effort="high"),
-    # Ceiling models — roster slots reserved, disabled until Alex opts in (cost).
-    Model(id="anthropic/claude-fable-5", label="Claude Fable 5", lab="Anthropic", input_per_m=10.0, output_per_m=50.0, enabled=False),
+    Model(id="z-ai/glm-5.3", label="GLM-5.3", lab="Zhipu", input_per_m=1.4, output_per_m=4.4, reasoning_effort="high"),
+    Model(id="minimax/minimax-m3", label="MiniMax M3", lab="MiniMax", input_per_m=0.3, output_per_m=1.2, reasoning_effort=None),
+    Model(id="nvidia/nemotron-3-ultra-550b-a55b", label="Nemotron 3 Ultra", lab="Nvidia", input_per_m=0.6, output_per_m=3.6),
+    Model(id="thinkingmachines/inkling", label="Inkling", lab="Thinking Machines", input_per_m=0.95, output_per_m=4.05),
+    Model(id="thinkingmachines/inkling-small", label="Inkling Small", lab="Thinking Machines", input_per_m=0.45, output_per_m=1.2),
+    Model(id="allenai/olmo-3-32b-think", label="OLMo 3 32B Think", lab="AI2", input_per_m=0.15, output_per_m=0.5, reasoning_effort=None),
+    # Ceiling models. Fable enabled 2026-08-24 at Alex's request; GPT-5.5 Pro still parked (cost).
+    Model(id="anthropic/claude-fable-5", label="Claude Fable 5", lab="Anthropic", input_per_m=10.0, output_per_m=50.0),
     Model(id="openai/gpt-5.5-pro", label="GPT-5.5 Pro", lab="OpenAI", input_per_m=30.0, output_per_m=180.0, enabled=False),
 ]
 

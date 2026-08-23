@@ -15,6 +15,8 @@
   --lab-xai: #2a78d6; --lab-meta: #eb6834; --lab-openai: #1baf7a;
   --lab-deepseek: #eda100; --lab-anthropic: #e87ba4; --lab-google: #008300;
   --lab-moonshot: #4a3aa7; --lab-qwen: #e34948; --lab-mistral: #898781;
+  --lab-zhipu: #0e7f86; --lab-minimax: #8a5a2b; --lab-nvidia: #5f8700;
+  --lab-tml: #8e44ad; --lab-ai2: #5a6b7f;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
@@ -26,6 +28,8 @@
     --lab-xai: #3987e5; --lab-meta: #d95926; --lab-openai: #199e70;
     --lab-deepseek: #c98500; --lab-anthropic: #d55181; --lab-google: #008300;
     --lab-moonshot: #9085e9; --lab-qwen: #e66767; --lab-mistral: #898781;
+    --lab-zhipu: #2a9aa1; --lab-minimax: #b07a3f; --lab-nvidia: #7fa62a;
+    --lab-tml: #a86fc7; --lab-ai2: #8296ab;
   }
 }
 :root[data-theme="dark"] {
@@ -126,11 +130,7 @@ footer a, header a { color: var(--series); }
     <h2>Leaderboard</h2>
     <p class="note" id="board-note"></p>
     <div class="tablebox"><table id="board">
-      <thead><tr>
-        <th>#</th><th>Model</th><th>Lab</th><th>Score</th><th>Solve rate</th>
-        <th>Avg +par</th><th>Invalid</th><th>Effort</th><th>Think tok</th>
-        <th>$/attempt</th><th>$/solve</th><th>Days</th>
-      </tr></thead>
+      <thead><tr></tr></thead>
       <tbody></tbody>
     </table></div>
   </section>
@@ -160,6 +160,8 @@ const LAB_VAR = {
   "xAI": "--lab-xai", "Meta": "--lab-meta", "OpenAI": "--lab-openai",
   "DeepSeek": "--lab-deepseek", "Anthropic": "--lab-anthropic", "Google": "--lab-google",
   "Moonshot": "--lab-moonshot", "Qwen": "--lab-qwen", "Mistral": "--lab-mistral",
+  "Zhipu": "--lab-zhipu", "MiniMax": "--lab-minimax", "Nvidia": "--lab-nvidia",
+  "Thinking Machines": "--lab-tml", "AI2": "--lab-ai2",
 };
 const labColor = lab => `var(${LAB_VAR[lab] || "--muted"})`;
 const fmt = {
@@ -302,30 +304,55 @@ function drawScatter() {
     `<span class="item"><span class="chip" style="background:${labColor(l)}"></span>${l}</span>`).join("");
 }
 
+const COLS = [
+  { label: "Model", get: x => x.r.label, str: true,
+    cell: x => `<span class="lab-chip" style="background:${labColor(x.r.lab)}"></span>${x.r.label}` },
+  { label: "Lab", get: x => x.r.lab, str: true, cell: x => x.r.lab },
+  { label: "Score", get: x => x.m.avg_score, cell: x => `<b>${fmt.pct(x.m.avg_score)}</b>` },
+  { label: "Solve rate", get: x => x.m.solve_rate, cell: x => fmt.pct(x.m.solve_rate) },
+  { label: "Avg +par", get: x => x.m.mean_over_par_solved, cell: x => fmt.plus(x.m.mean_over_par_solved) },
+  { label: "Invalid", get: x => x.m.invalid_rate, cell: x => fmt.pct(x.m.invalid_rate) },
+  { label: "Effort", get: x => x.r.reasoning_effort ?? "", str: true, cell: x => x.r.reasoning_effort ?? "—" },
+  { label: "Think tok", get: x => x.m.mean_reasoning_tokens, cell: x => fmt.tok(x.m.mean_reasoning_tokens) },
+  { label: "$/attempt", get: x => x.m.mean_cost_per_attempt, cell: x => fmt.cost(x.m.mean_cost_per_attempt) },
+  { label: "$/solve", get: x => x.m.cost_per_solve, cell: x => fmt.cost(x.m.cost_per_solve) },
+  { label: "Days", get: x => x.m.n_days, cell: x => x.m.n_days },
+];
+let sortState = { col: 2, dir: -1 }; // default: Score, descending
+
 function drawBoard() {
+  const thead = document.querySelector("#board thead tr");
   const tbody = document.querySelector("#board tbody");
+  thead.innerHTML = "<th>#</th>" + COLS.map((c, i) =>
+    `<th style="cursor:pointer" data-col="${i}" title="Click to sort">${c.label}${
+      sortState.col === i ? (sortState.dir === -1 ? " ▾" : " ▴") : ""}</th>`).join("");
+  thead.querySelectorAll("th[data-col]").forEach(th =>
+    th.addEventListener("click", () => {
+      const col = +th.dataset.col;
+      sortState = {
+        col,
+        dir: sortState.col === col ? -sortState.dir : (COLS[col].str ? 1 : -1),
+      };
+      drawBoard();
+    }));
   tbody.innerHTML = "";
+  const c = COLS[sortState.col];
   const rows = board.models
     .map(r => ({ r, m: metric(r, windowKey) }))
     .filter(({ m }) => m.n_attempts > 0)
-    .sort((a, b) => b.m.avg_score - a.m.avg_score);
+    .sort((a, b) => {
+      const va = c.get(a), vb = c.get(b);
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1; // nulls last regardless of direction
+      if (vb == null) return -1;
+      return (c.str ? String(va).localeCompare(String(vb)) : va - vb) * sortState.dir;
+    });
   document.getElementById("board-note").textContent =
     (windowKey === "all" ? `All ${board.n_days} benchmarked days. ` : "Rolling 30-day window. ") +
-    "Score = mean of par ÷ steps (invalid = 0) over scored attempts.";
-  rows.forEach(({ r, m }, i) => {
+    "Score = mean of par ÷ steps (invalid = 0) over scored attempts. Click a column to sort.";
+  rows.forEach((x, i) => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${i + 1}</td>
-      <td><span class="lab-chip" style="background:${labColor(r.lab)}"></span>${r.label}</td>
-      <td>${r.lab}</td>
-      <td><b>${fmt.pct(m.avg_score)}</b></td>
-      <td>${fmt.pct(m.solve_rate)}</td>
-      <td>${fmt.plus(m.mean_over_par_solved)}</td>
-      <td>${fmt.pct(m.invalid_rate)}</td>
-      <td>${r.reasoning_effort ?? "—"}</td>
-      <td>${fmt.tok(m.mean_reasoning_tokens)}</td>
-      <td>${fmt.cost(m.mean_cost_per_attempt)}</td>
-      <td>${fmt.cost(m.cost_per_solve)}</td>
-      <td>${m.n_days}</td>`;
+    tr.innerHTML = `<td>${i + 1}</td>` + COLS.map(col => `<td>${col.cell(x)}</td>`).join("");
     tbody.appendChild(tr);
   });
 }

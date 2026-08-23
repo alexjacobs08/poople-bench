@@ -15,9 +15,9 @@ def test_all_roster_ids_exist_in_catalog():
     assert missing == []
 
 
-def test_expensive_models_present_but_disabled():
+def test_expensive_models():
     by_id = {m.id: m for m in MODELS}
-    assert not by_id["anthropic/claude-fable-5"].enabled
+    assert by_id["anthropic/claude-fable-5"].enabled  # opted in 2026-08-24
     assert not by_id["openai/gpt-5.5-pro"].enabled
 
 
