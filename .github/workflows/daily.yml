@@ -1,0 +1,41 @@
+name: daily-benchmark
+
+on:
+  schedule:
+    - cron: "20 8 * * *" # 20 min after the 08:00 UTC puzzle flip
+  workflow_dispatch:
+
+concurrency:
+  group: daily-benchmark
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync
+      - name: Run today's puzzle (k=3)
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: uv run poople-bench daily --trials 3
+      - name: Aggregate leaderboard
+        run: uv run poople-bench aggregate
+      - name: Commit results
+        run: |
+          git config user.name "poople-bench-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add results/
+          git diff --cached --quiet || git commit -m "results: daily run $(date -u +%F)"
+          git push
+  deploy:
+    needs: run
+    uses: ./.github/workflows/pages.yml
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
