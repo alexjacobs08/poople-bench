@@ -209,11 +209,28 @@ def cmd_backfill(args: argparse.Namespace) -> None:
     indices = stratified_sample(schedule, args.sample, args.seed, today_index)
     models = _select_models(args.models)
     key = _load_env_key()
-    print(f"backfilling {len(indices)} sampled days (seed {args.seed})")
-    for i in indices:
-        run_puzzle(
-            schedule[i], models, args.trials, "backfill", key, args.workers, args.timeout
-        )
+    print(
+        f"backfilling {len(indices)} sampled days (seed {args.seed}), "
+        f"{args.day_workers} days at a time"
+    )
+    # Days are independent (one result file each), so run them concurrently:
+    # total in-flight requests = day_workers x workers.
+    with ThreadPoolExecutor(max_workers=args.day_workers) as days:
+        futures = [
+            days.submit(
+                run_puzzle,
+                schedule[i],
+                models,
+                args.trials,
+                "backfill",
+                key,
+                args.workers,
+                args.timeout,
+            )
+            for i in indices
+        ]
+        for future in as_completed(futures):
+            future.result()
 
 
 def cmd_aggregate(_: argparse.Namespace) -> None:
@@ -276,7 +293,8 @@ def main() -> None:
     backfill.add_argument("--seed", type=int, default=42)
     backfill.add_argument("--trials", type=int, default=1)
     backfill.add_argument("--models", help="comma-separated model ids")
-    backfill.add_argument("--workers", type=int, default=8)
+    backfill.add_argument("--day-workers", type=int, default=8, help="days run concurrently")
+    backfill.add_argument("--workers", type=int, default=6, help="parallel attempts within a day")
     backfill.add_argument("--timeout", type=float, default=600.0)
     backfill.set_defaults(func=cmd_backfill)
 
