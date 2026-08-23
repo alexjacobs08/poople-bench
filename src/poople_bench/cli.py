@@ -262,7 +262,7 @@ def main() -> None:
     daily.add_argument("--trials", type=int, default=3)
     daily.add_argument("--models", help="comma-separated model ids (default: enabled roster)")
     daily.add_argument("--workers", type=int, default=8)
-    daily.add_argument("--timeout", type=float, default=300.0)
+    daily.add_argument("--timeout", type=float, default=600.0)
     daily.set_defaults(func=cmd_daily)
 
     backfill = sub.add_parser("backfill", help="run a stratified sample of past days")
@@ -271,7 +271,7 @@ def main() -> None:
     backfill.add_argument("--trials", type=int, default=1)
     backfill.add_argument("--models", help="comma-separated model ids")
     backfill.add_argument("--workers", type=int, default=8)
-    backfill.add_argument("--timeout", type=float, default=300.0)
+    backfill.add_argument("--timeout", type=float, default=600.0)
     backfill.set_defaults(func=cmd_backfill)
 
     agg = sub.add_parser("aggregate", help="rebuild leaderboard.json + index.json")

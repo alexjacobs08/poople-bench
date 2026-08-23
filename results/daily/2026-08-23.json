@@ -1,0 +1,42 @@
+{
+ "date": "2026-08-23",
+ "index": 374,
+ "word": "girl",
+ "par": 5,
+ "mode": "daily",
+ "attempts": [
+  {
+   "date": "2026-08-23",
+   "index": 374,
+   "word": "girl",
+   "par": 5,
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "trial": 0,
+   "mode": "daily",
+   "provider": "Sail Research",
+   "raw": "{\"ladder\": [\"girl\", \"gill\", \"pill\", \"poll\", \"pool\", \"poop\"]}",
+   "ladder": [
+    "girl",
+    "gill",
+    "pill",
+    "poll",
+    "pool",
+    "poop"
+   ],
+   "parser": "json",
+   "valid": true,
+   "failure": null,
+   "steps": 5,
+   "over_par": 0,
+   "score": 1.0,
+   "prompt_tokens": 3660,
+   "completion_tokens": 16455,
+   "reasoning_tokens": 0,
+   "cost": 0.0031998,
+   "latency_s": 249.21,
+   "generation_id": "gen-1787522246-wjKzWYGfmba6BMtzoft4",
+   "prompt_version": "1",
+   "error": null
+  }
+ ]
+}
