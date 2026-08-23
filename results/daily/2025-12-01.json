@@ -27,7 +27,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.05444673541933298,
+   "latency_s": 0.06251879408955574,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -54,7 +54,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 3.450675637461245,
+   "latency_s": 0.07758990209549665,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -81,7 +81,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.06442045327275991,
+   "latency_s": 0.04426873195916414,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -108,7 +108,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.03864966332912445,
+   "latency_s": 0.0601856354624033,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -135,7 +135,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.0663516977801919,
+   "latency_s": 0.04927605763077736,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -162,7 +162,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.06663268338888884,
+   "latency_s": 0.0830511674284935,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -189,7 +189,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.03153340704739094,
+   "latency_s": 0.03913665283471346,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -216,7 +216,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.03522796090692282,
+   "latency_s": 0.029274667613208294,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -243,7 +243,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.02476595528423786,
+   "latency_s": 0.053879943676292896,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -270,7 +270,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.01276806928217411,
+   "latency_s": 0.015026343986392021,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 404: {\"error\":{\"message\":\"No endpoints available matching your guardrail restrictions and data policy. Configure: https://openrouter.ai/settings/privacy\",\"code\":404}}')"
@@ -297,7 +297,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.0394020127132535,
+   "latency_s": 0.038826859556138515,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -324,7 +324,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.050994597375392914,
+   "latency_s": 0.029523203149437904,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -351,7 +351,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.056533453054726124,
+   "latency_s": 0.03571396879851818,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -378,7 +378,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.04926748666912317,
+   "latency_s": 0.06313473917543888,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -405,7 +405,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.05837156157940626,
+   "latency_s": 0.04385416302829981,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -432,7 +432,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.043136078864336014,
+   "latency_s": 0.07692007441073656,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -459,7 +459,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.029974871315062046,
+   "latency_s": 0.029912776313722134,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -486,7 +486,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.03008054941892624,
+   "latency_s": 0.03921302501112223,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
@@ -513,7 +513,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.056842463091015816,
+   "latency_s": 0.042656514793634415,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 402: {\"error\":{\"message\":\"This request would exceed your available credits given your current in-flight requests. Retry after in-flight requests settle, or add credits.\",\"code\":402,\"metadata\":{\"reason\":\"in_flight_budget_exhausted\",\"limit_source\":\"openrouter_in_flight_budget\",\"remedy_h"
