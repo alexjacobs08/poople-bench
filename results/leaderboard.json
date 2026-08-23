@@ -1,0 +1,43 @@
+{
+ "generated_at": "2026-08-23T22:03:46.419883+00:00",
+ "n_days": 1,
+ "dates": [
+  "2026-08-23"
+ ],
+ "prompt_versions": [
+  "1"
+ ],
+ "models": [
+  {
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "label": "DeepSeek V4 Flash",
+   "lab": "DeepSeek",
+   "input_per_m": 0.08,
+   "output_per_m": 0.18,
+   "n_days": 1,
+   "n_attempts": 1,
+   "n_api_errors": 0,
+   "avg_score": 1.0,
+   "solve_rate": 1.0,
+   "invalid_rate": 0.0,
+   "pass_rate_days": 1.0,
+   "mean_over_par_solved": 0,
+   "total_cost": 0.0031998,
+   "mean_cost_per_attempt": 0.0031998,
+   "cost_per_solve": 0.0031998,
+   "rolling30": {
+    "n_days": 1,
+    "n_attempts": 1,
+    "n_api_errors": 0,
+    "avg_score": 1.0,
+    "solve_rate": 1.0,
+    "invalid_rate": 0.0,
+    "pass_rate_days": 1.0,
+    "mean_over_par_solved": 0,
+    "total_cost": 0.0031998,
+    "mean_cost_per_attempt": 0.0031998,
+    "cost_per_solve": 0.0031998
+   }
+  }
+ ]
+}
