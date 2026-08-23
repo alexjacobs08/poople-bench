@@ -111,3 +111,17 @@ def test_extract_response():
 def test_extract_response_content_parts():
     body = dict(OK_BODY, choices=[{"message": {"content": [{"type": "text", "text": "hi"}]}}])
     assert extract_response(body)["raw"] == "hi"
+
+
+def test_extract_response_reasoning_and_finish():
+    body = {
+        "id": "gen-9",
+        "choices": [{
+            "finish_reason": "length",
+            "message": {"content": "", "reasoning": "thinking... final: girl gill poop"},
+        }],
+    }
+    out = extract_response(body)
+    assert out["raw"] == ""
+    assert out["reasoning"] == "thinking... final: girl gill poop"
+    assert out["finish_reason"] == "length"

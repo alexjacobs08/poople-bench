@@ -97,7 +97,13 @@ def _run_attempt(
         return Attempt(**base, latency_s=time.monotonic() - start, error=repr(exc)[:300])
     latency = time.monotonic() - start
     extracted = extract_response(data)
+    reasoning = extracted.pop("reasoning", None)
     ladder, parser = parse_ladder(extracted["raw"])
+    if ladder is None and reasoning:
+        # Empty/unparseable content but a reasoning trace: models sometimes
+        # state the final ladder only there. Flagged via the parser name.
+        ladder, parser = parse_ladder(reasoning)
+        parser = f"reasoning:{parser}" if ladder else "none"
     if ladder is None:
         valid, failure, steps, norm = False, "format_error", None, None
     else:

@@ -50,6 +50,7 @@ class Attempt(BaseModel):
     trial: int
     mode: str  # daily | backfill
     provider: str | None = None
+    finish_reason: str | None = None
     raw: str | None = None
     ladder: list[str] | None = None
     parser: str = "none"
@@ -128,7 +129,8 @@ def call_openrouter(
 
 
 def extract_response(data: dict[str, Any]) -> dict[str, Any]:
-    content = data["choices"][0].get("message", {}).get("content")
+    choice = data["choices"][0]
+    content = choice.get("message", {}).get("content")
     if isinstance(content, list):
         content = "".join(
             part.get("text", "") for part in content if isinstance(part, dict)
@@ -137,6 +139,8 @@ def extract_response(data: dict[str, Any]) -> dict[str, Any]:
     details = usage.get("completion_tokens_details") or {}
     return {
         "raw": content,
+        "reasoning": choice.get("message", {}).get("reasoning"),
+        "finish_reason": choice.get("finish_reason"),
         "prompt_tokens": usage.get("prompt_tokens"),
         "completion_tokens": usage.get("completion_tokens"),
         "reasoning_tokens": details.get("reasoning_tokens"),
