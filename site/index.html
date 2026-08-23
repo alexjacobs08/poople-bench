@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Poople Bench</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💩</text></svg>">
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb;
+  --ink: #0b0b0b; --ink-2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10);
+  --series: #2a78d6; --dim: #a9b7c9;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19;
+    --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+    --series: #3987e5; --dim: #47566b;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19;
+  --ink: #ffffff; --ink-2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10);
+  --series: #3987e5; --dim: #47566b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.wrap { max-width: 980px; margin: 0 auto; padding: 24px 16px 64px; }
+header h1 { font-size: 28px; margin: 0 0 4px; }
+header .sub { color: var(--ink-2); margin: 0 0 6px; }
+header .today { color: var(--muted); font-size: 13px; }
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 16px; margin-top: 20px;
+}
+.card h2 { font-size: 17px; margin: 0 0 2px; }
+.card .note { color: var(--muted); font-size: 12.5px; margin: 0 0 10px; }
+.filters { display: flex; gap: 8px; margin: 10px 0 4px; }
+.filters button {
+  font: inherit; font-size: 13px; color: var(--ink-2);
+  background: none; border: 1px solid var(--border); border-radius: 999px;
+  padding: 3px 12px; cursor: pointer;
+}
+.filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--series); font-weight: 600; }
+.chartbox { position: relative; overflow-x: auto; }
+svg text { font: 11.5px system-ui, -apple-system, "Segoe UI", sans-serif; }
+.tooltip {
+  position: absolute; pointer-events: none; display: none; z-index: 3;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.18); padding: 8px 10px; font-size: 12.5px;
+  min-width: 170px;
+}
+.tooltip b { display: block; margin-bottom: 2px; }
+.tooltip .row { display: flex; justify-content: space-between; gap: 14px; color: var(--ink-2); }
+.tooltip .row span:last-child { color: var(--ink); font-variant-numeric: tabular-nums; }
+.tablebox { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 6px 10px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child, th:nth-child(2), td:nth-child(2),
+th:nth-child(3), td:nth-child(3) { text-align: left; }
+thead th { color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--axis); font-size: 12px; }
+tbody td { border-bottom: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+tbody tr:hover { background: color-mix(in srgb, var(--series) 7%, transparent); }
+.frontier-chip { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--series); margin-right:6px; vertical-align: 1px; }
+select {
+  font: inherit; font-size: 13.5px; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--border); border-radius: 6px; padding: 3px 8px;
+}
+.day-attempt { border-bottom: 1px solid var(--grid); padding: 7px 0; font-size: 13.5px; }
+.day-attempt:last-child { border-bottom: none; }
+.ladder { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.ladder .step { text-transform: uppercase; letter-spacing: .04em; }
+.ok { color: var(--series); font-weight: 600; }
+.bad { color: var(--muted); }
+footer { color: var(--muted); font-size: 12.5px; margin-top: 28px; }
+footer a, header a { color: var(--series); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Poople Bench 💩</h1>
+    <p class="sub">Can LLMs one-shot the daily <a href="https://poople.io">Poople</a> word ladder?
+      Models get the start word and the legal word list, and must output a complete ladder to
+      POOP in a single response — scored against the provable optimum (par).</p>
+    <p class="today" id="today"></p>
+  </header>
+
+  <section class="card">
+    <h2>Score vs cost</h2>
+    <p class="note">Mean score (par ÷ steps; invalid = 0) vs mean cost per attempt.
+      Filled points are the Pareto frontier; hollow points are dominated. Hover for detail.</p>
+    <div class="filters" id="window-filter" role="group" aria-label="Time window">
+      <button aria-pressed="true" data-window="all">All time</button>
+      <button aria-pressed="false" data-window="rolling30">Last 30 days</button>
+    </div>
+    <div class="chartbox">
+      <svg id="scatter" width="920" height="470" viewBox="0 0 920 470" role="img" aria-label="Scatter plot of model score versus cost per attempt"></svg>
+      <div class="tooltip" id="tip"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Leaderboard</h2>
+    <p class="note" id="board-note"></p>
+    <div class="tablebox"><table id="board">
+      <thead><tr>
+        <th>#</th><th>Model</th><th>Lab</th><th>Score</th><th>Solve rate</th>
+        <th>Avg +par</th><th>Invalid</th><th>$/attempt</th><th>$/solve</th><th>Days</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <section class="card">
+    <h2>Daily results</h2>
+    <p class="note">Every attempt for one puzzle day, with the ladders models actually produced.</p>
+    <select id="day-select" aria-label="Choose a puzzle day"></select>
+    <div id="day-detail"></div>
+  </section>
+
+  <footer>
+    <p><b>Method.</b> One-shot, open book: each model receives the day's start word plus the full
+    2,398-word legal list (harvested from the game itself) and returns a whole ladder in one
+    response — no tools, no feedback, k=3 trials daily (k=1 for backfilled days), provider-default
+    sampling, reasoning effort pinned per model. Score = par ÷ steps for a legal ladder, 0 for an
+    illegal one; par is verified independently by BFS. Costs are exact per-request charges
+    reported by OpenRouter. API failures are excluded from scores. Daily rankings are
+    entertainment; trust the rolling window.
+    Source &amp; data: <a href="https://github.com/alexjacobs08/poople-bench">github.com/alexjacobs08/poople-bench</a>.</p>
+  </footer>
+</div>
+
+<script>
+const fmt = {
+  pct: v => (v * 100).toFixed(1) + "%",
+  cost: v => v == null ? "—" : v >= 0.095 ? "$" + v.toFixed(2) : v >= 0.0095 ? (v * 100).toFixed(1) + "¢" : (v * 100).toFixed(2) + "¢",
+  plus: v => v == null ? "—" : "+" + v.toFixed(2),
+};
+let board = null, manifest = null, windowKey = "all";
+
+const metric = (row, key) => key === "all" ? row : row.rolling30;
+
+function paretoFrontier(points) {
+  const sorted = [...points].sort((a, b) => a.x - b.x || b.y - a.y);
+  const frontier = []; let best = -1;
+  for (const p of sorted) if (p.y > best) { frontier.push(p); best = p.y; }
+  return new Set(frontier.map(p => p.id));
+}
+
+function drawScatter() {
+  const svg = document.getElementById("scatter");
+  const tip = document.getElementById("tip");
+  svg.innerHTML = "";
+  const rows = board.models
+    .map(r => ({ r, m: metric(r, windowKey) }))
+    .filter(({ m }) => m.n_attempts - m.n_api_errors > 0 && m.mean_cost_per_attempt > 0);
+  if (!rows.length) return;
+  const pts = rows.map(({ r, m }) => ({
+    id: r.model, label: r.label, lab: r.lab,
+    x: m.mean_cost_per_attempt, y: m.avg_score, m,
+  }));
+  const M = { l: 62, r: 30, t: 16, b: 46 }, W = 920, H = 470;
+  const xs = pts.map(p => p.x);
+  const xmin = Math.min(...xs) / 1.6, xmax = Math.max(...xs) * 1.6;
+  const X = v => M.l + (Math.log10(v) - Math.log10(xmin)) / (Math.log10(xmax) - Math.log10(xmin)) * (W - M.l - M.r);
+  const Y = v => H - M.b - v * (H - M.t - M.b);
+  const NS = "http://www.w3.org/2000/svg";
+  const el = (tag, attrs, parent) => {
+    const node = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, v);
+    (parent || svg).appendChild(node); return node;
+  };
+  // gridlines + axes
+  for (const t of [0, 0.25, 0.5, 0.75, 1]) {
+    el("line", { x1: M.l, x2: W - M.r, y1: Y(t), y2: Y(t), stroke: "var(--grid)", "stroke-width": 1 });
+    const lbl = el("text", { x: M.l - 8, y: Y(t) + 4, "text-anchor": "end", fill: "var(--muted)" });
+    lbl.textContent = (t * 100) + "%";
+  }
+  for (let e = Math.ceil(Math.log10(xmin)); e <= Math.floor(Math.log10(xmax)); e++) {
+    const v = 10 ** e;
+    el("line", { x1: X(v), x2: X(v), y1: M.t, y2: H - M.b, stroke: "var(--grid)", "stroke-width": 1 });
+    const lbl = el("text", { x: X(v), y: H - M.b + 18, "text-anchor": "middle", fill: "var(--muted)" });
+    lbl.textContent = fmt.cost(v);
+  }
+  el("line", { x1: M.l, x2: W - M.r, y1: H - M.b, y2: H - M.b, stroke: "var(--axis)", "stroke-width": 1 });
+  const xt = el("text", { x: (M.l + W - M.r) / 2, y: H - 8, "text-anchor": "middle", fill: "var(--ink-2)" });
+  xt.textContent = "cost per attempt (log scale)";
+  const yt = el("text", { x: 14, y: (M.t + H - M.b) / 2, fill: "var(--ink-2)", transform: `rotate(-90 14 ${(M.t + H - M.b) / 2})`, "text-anchor": "middle" });
+  yt.textContent = "score (par ÷ steps)";
+  // frontier step line
+  const frontier = paretoFrontier(pts);
+  const fpts = pts.filter(p => frontier.has(p.id)).sort((a, b) => a.x - b.x);
+  let d = "";
+  fpts.forEach((p, i) => {
+    d += (i === 0 ? `M ${X(p.x)} ${Y(p.y)}` : ` H ${X(p.x)} V ${Y(p.y)}`);
+  });
+  if (fpts.length > 1) el("path", { d, fill: "none", stroke: "var(--series)", "stroke-width": 2, "stroke-opacity": 0.45 });
+  // points (dominated first so frontier renders on top)
+  const show = (p, node) => {
+    const box = svg.parentElement.getBoundingClientRect();
+    const rect = node.getBoundingClientRect();
+    tip.style.display = "block";
+    tip.innerHTML = `<b>${p.label}</b>
+      <div class="row"><span>score</span><span>${fmt.pct(p.y)}</span></div>
+      <div class="row"><span>solve rate</span><span>${fmt.pct(p.m.solve_rate)}</span></div>
+      <div class="row"><span>avg +par (solved)</span><span>${fmt.plus(p.m.mean_over_par_solved)}</span></div>
+      <div class="row"><span>cost / attempt</span><span>${fmt.cost(p.x)}</span></div>
+      <div class="row"><span>attempts</span><span>${p.m.n_attempts - p.m.n_api_errors}</span></div>`;
+    const x = rect.left - box.left + 14, y = rect.top - box.top - 10;
+    tip.style.left = Math.min(x, box.width - 200) + "px";
+    tip.style.top = Math.max(y - 60, 4) + "px";
+  };
+  for (const p of [...pts.filter(p => !frontier.has(p.id)), ...fpts]) {
+    const isF = frontier.has(p.id);
+    const dot = el("circle", {
+      cx: X(p.x), cy: Y(p.y), r: isF ? 6 : 5,
+      fill: isF ? "var(--series)" : "none",
+      stroke: isF ? "var(--surface)" : "var(--dim)",
+      "stroke-width": 2, tabindex: 0,
+    });
+    if (isF) {
+      const lbl = el("text", { x: X(p.x) + 9, y: Y(p.y) - 8, fill: "var(--ink)", "font-weight": 600 });
+      lbl.textContent = p.label;
+    }
+    const target = el("circle", { cx: X(p.x), cy: Y(p.y), r: 13, fill: "transparent", cursor: "pointer" });
+    for (const node of [dot, target]) {
+      node.addEventListener("mouseenter", () => show(p, dot));
+      node.addEventListener("mouseleave", () => (tip.style.display = "none"));
+      node.addEventListener("focus", () => show(p, dot));
+      node.addEventListener("blur", () => (tip.style.display = "none"));
+    }
+  }
+}
+
+function drawBoard() {
+  const tbody = document.querySelector("#board tbody");
+  tbody.innerHTML = "";
+  const rows = board.models
+    .map(r => ({ r, m: metric(r, windowKey) }))
+    .filter(({ m }) => m.n_attempts > 0)
+    .sort((a, b) => b.m.avg_score - a.m.avg_score);
+  const frontier = paretoFrontier(rows
+    .filter(({ m }) => m.mean_cost_per_attempt > 0)
+    .map(({ r, m }) => ({ id: r.model, x: m.mean_cost_per_attempt, y: m.avg_score })));
+  document.getElementById("board-note").textContent =
+    windowKey === "all"
+      ? `All ${board.n_days} benchmarked days. Blue dot = Pareto frontier (no cheaper model scores higher).`
+      : "Rolling 30-day window. Blue dot = Pareto frontier (no cheaper model scores higher).";
+  rows.forEach(({ r, m }, i) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${i + 1}</td>
+      <td>${frontier.has(r.model) ? '<span class="frontier-chip"></span>' : ""}${r.label}</td>
+      <td>${r.lab}</td>
+      <td><b>${fmt.pct(m.avg_score)}</b></td>
+      <td>${fmt.pct(m.solve_rate)}</td>
+      <td>${fmt.plus(m.mean_over_par_solved)}</td>
+      <td>${fmt.pct(m.invalid_rate)}</td>
+      <td>${fmt.cost(m.mean_cost_per_attempt)}</td>
+      <td>${fmt.cost(m.cost_per_solve)}</td>
+      <td>${m.n_days}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+async function drawDay(file) {
+  const doc = await (await fetch("results/" + file)).json();
+  const detail = document.getElementById("day-detail");
+  const byModel = {};
+  for (const a of doc.attempts) (byModel[a.model] ??= []).push(a);
+  detail.innerHTML = `<p class="note" style="margin-top:10px">
+    #${doc.index} <b>${doc.word.toUpperCase()}</b> → POOP, par ${doc.par} (${doc.mode})</p>`;
+  for (const [model, attempts] of Object.entries(byModel).sort()) {
+    const row = document.createElement("div");
+    row.className = "day-attempt";
+    const label = (board.models.find(m => m.model === model) || { label: model }).label;
+    const lines = attempts.sort((a, b) => a.trial - b.trial).map(a => {
+      if (a.error) return `<span class="bad">trial ${a.trial}: API error</span>`;
+      if (!a.valid) return `<span class="bad">trial ${a.trial}: invalid (${a.failure})</span>`;
+      const ladder = a.ladder.map(w => `<span class="step">${w}</span>`).join(" → ");
+      return `<span class="ok">trial ${a.trial}: +${a.over_par}</span> <span class="ladder">${ladder}</span> <span class="bad">${fmt.cost(a.cost)}</span>`;
+    });
+    row.innerHTML = `<b>${label}</b><br>${lines.join("<br>")}`;
+    detail.appendChild(row);
+  }
+}
+
+async function main() {
+  [board, manifest] = await Promise.all([
+    fetch("results/leaderboard.json").then(r => r.json()),
+    fetch("results/index.json").then(r => r.json()),
+  ]);
+  const days = [...manifest.days].reverse();
+  const today = days[0];
+  if (today) document.getElementById("today").textContent =
+    `Latest puzzle: #${today.index} ${today.word.toUpperCase()} → POOP (par ${today.par}), ${today.date} · ${board.n_days} days benchmarked · updated ${board.generated_at.slice(0, 10)}`;
+  const sel = document.getElementById("day-select");
+  for (const d of days) {
+    const opt = document.createElement("option");
+    opt.value = d.file;
+    opt.textContent = `${d.date} — #${d.index} ${d.word.toUpperCase()} (par ${d.par})`;
+    sel.appendChild(opt);
+  }
+  sel.addEventListener("change", () => drawDay(sel.value));
+  document.querySelectorAll("#window-filter button").forEach(btn =>
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#window-filter button").forEach(b => b.setAttribute("aria-pressed", "false"));
+      btn.setAttribute("aria-pressed", "true");
+      windowKey = btn.dataset.window;
+      drawScatter(); drawBoard();
+    }));
+  drawScatter(); drawBoard();
+  if (today) drawDay(today.file);
+}
+main();
+</script>
+</body>
+</html>

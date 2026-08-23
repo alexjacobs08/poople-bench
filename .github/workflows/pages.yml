@@ -1,0 +1,38 @@
+name: deploy-pages
+
+on:
+  push:
+    branches: [main]
+    paths: [site/**, results/**]
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  pages: write
+  id-token: write
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main # daily.yml pushes results before calling us; a stale merge SHA would miss them
+      - name: Assemble site
+        run: |
+          mkdir -p _site/results
+          cp site/index.html _site/
+          cp -r results/daily results/leaderboard.json results/index.json _site/results/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4
