@@ -35,7 +35,9 @@ MODELS: list[Model] = [
     Model(id="deepseek/deepseek-v4-pro-0813", label="DeepSeek V4 Pro", lab="DeepSeek", input_per_m=1.122, output_per_m=3.366, reasoning_effort="high"),
     Model(id="deepseek/deepseek-v4-flash-0731", label="DeepSeek V4 Flash", lab="DeepSeek", input_per_m=0.08, output_per_m=0.18, reasoning_effort="high"),
     Model(id="meta/muse-spark-1.2", label="Muse Spark 1.2", lab="Meta", input_per_m=1.25, output_per_m=4.25),
-    Model(id="meta/muse-spark-1.2-contributor", label="Muse Spark 1.2 Contributor", lab="Meta", input_per_m=0.1, output_per_m=0.2),
+    # Disabled 2026-08-24: every request 404s behind an account guardrail the
+    # main Muse model doesn't hit. Re-enable if the attestation ever clears.
+    Model(id="meta/muse-spark-1.2-contributor", label="Muse Spark 1.2 Contributor", lab="Meta", input_per_m=0.1, output_per_m=0.2, enabled=False),
     Model(id="qwen/qwen3.8-max", label="Qwen3.8 Max", lab="Qwen", input_per_m=2.0, output_per_m=6.0),
     Model(id="qwen/qwen3.7-flash", label="Qwen3.7 Flash", lab="Qwen", input_per_m=0.03, output_per_m=0.13, reasoning_effort=None),
     Model(id="moonshotai/kimi-k3", label="Kimi K3", lab="Moonshot", input_per_m=3.0, output_per_m=15.0, reasoning_effort="high"),
@@ -47,7 +49,8 @@ MODELS: list[Model] = [
     Model(id="nvidia/nemotron-3-ultra-550b-a55b", label="Nemotron 3 Ultra", lab="Nvidia", input_per_m=0.6, output_per_m=3.6),
     Model(id="thinkingmachines/inkling", label="Inkling", lab="Thinking Machines", input_per_m=0.95, output_per_m=4.05),
     Model(id="thinkingmachines/inkling-small", label="Inkling Small", lab="Thinking Machines", input_per_m=0.45, output_per_m=1.2),
-    Model(id="allenai/olmo-3-32b-think", label="OLMo 3 32B Think", lab="AI2", input_per_m=0.15, output_per_m=0.5, reasoning_effort=None),
+    # Disabled 2026-08-24: no active endpoints on OpenRouter (every request 404s).
+    Model(id="allenai/olmo-3-32b-think", label="OLMo 3 32B Think", lab="AI2", input_per_m=0.15, output_per_m=0.5, reasoning_effort=None, enabled=False),
     # Ceiling models. Fable enabled 2026-08-24 at Alex's request; GPT-5.5 Pro still parked (cost).
     Model(id="anthropic/claude-fable-5", label="Claude Fable 5", lab="Anthropic", input_per_m=10.0, output_per_m=50.0),
     Model(id="openai/gpt-5.5-pro", label="GPT-5.5 Pro", lab="OpenAI", input_per_m=30.0, output_per_m=180.0, enabled=False),

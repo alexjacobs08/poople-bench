@@ -363,7 +363,7 @@ function drawBoard() {
   const c = COLS[sortState.col];
   const rows = board.models
     .map(r => ({ r, m: metric(r, windowKey) }))
-    .filter(({ m }) => m.n_attempts > 0)
+    .filter(({ m }) => m.n_attempts - m.n_api_errors > 0)
     .sort((a, b) => {
       const va = c.get(a), vb = c.get(b);
       if (va == null && vb == null) return 0;
