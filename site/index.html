@@ -166,7 +166,7 @@ const LAB_VAR = {
 const labColor = lab => `var(${LAB_VAR[lab] || "--muted"})`;
 const fmt = {
   pct: v => (v * 100).toFixed(1) + "%",
-  cost: v => v == null ? "—" : v >= 0.095 ? "$" + v.toFixed(2) : v >= 0.0095 ? (v * 100).toFixed(1) + "¢" : (v * 100).toFixed(2) + "¢",
+  cost: v => v == null ? "—" : "$" + (v >= 0.1 ? v.toFixed(2) : v >= 0.01 ? v.toFixed(3) : v.toFixed(4)),
   plus: v => v == null ? "—" : "+" + v.toFixed(2),
   tok: v => v == null ? "—" : v >= 1000 ? (v / 1000).toFixed(1) + "k" : String(v),
 };
