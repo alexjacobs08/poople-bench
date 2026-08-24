@@ -27,7 +27,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.0240515423938632,
+   "latency_s": 0.04770091641694307,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 404: {\"error\":{\"message\":\"No endpoints found for allenai/olmo-3-32b-think.\",\"code\":404},\"user_id\":\"user_2x3aX9rhCvB3MgIfUz6MYvbnIH8\"}')"
@@ -413,7 +413,7 @@
    "completion_tokens": null,
    "reasoning_tokens": null,
    "cost": null,
-   "latency_s": 0.08044382650405169,
+   "latency_s": 0.023391337133944035,
    "generation_id": null,
    "prompt_version": "1",
    "error": "ApiError('HTTP 404: {\"error\":{\"message\":\"No endpoints available matching your guardrail restrictions and data policy. Configure: https://openrouter.ai/settings/privacy\",\"code\":404}}')"
