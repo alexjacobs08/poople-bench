@@ -36,3 +36,12 @@ def test_prompt_contents():
     # no par leak: the only digit in the prompt is the word length
     assert set(re.findall(r"\d+", prompt)) <= {"4"}
     assert PROMPT_VERSION == "1"
+
+
+def test_trial_tiers():
+    by_id = {m.id: m for m in MODELS}
+    assert by_id["anthropic/claude-fable-5"].trials == 1
+    assert by_id["x-ai/grok-4.6"].trials == 1
+    assert by_id["deepseek/deepseek-v4-flash-0731"].trials == 3
+    for mid in ["mistralai/mistral-medium-3-5", "mistralai/mistral-small-2603", "qwen/qwen3.8-max"]:
+        assert not by_id[mid].enabled

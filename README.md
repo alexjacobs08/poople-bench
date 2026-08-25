@@ -19,10 +19,10 @@ whole ladder in a single response, no feedback, no tools — and scores them aga
   golf-style as +N over par); an illegal ladder scores 0, with the failure kind logged
   (bad format / invalid word / broken step / didn't reach POOP). API errors are excluded
   from scores and reported separately.
-- **Trials:** k=3 per model per day (avg@k headline), provider-default sampling,
-  reasoning effort pinned per model. Backfilled historical days (a par-stratified
-  sample) run at k=1. Single-day rankings are entertainment — trust the rolling
-  30-day aggregate.
+- **Trials:** tiered by cost — cheap models run k=3 daily, expensive ones k=1
+  (avg@k headline); provider-default sampling, reasoning effort pinned per model.
+  Backfilled historical days (a par-stratified sample) ran at k=1. Single-day
+  rankings are entertainment — trust the rolling 30-day aggregate.
 - **Cost:** exact per-request charges from OpenRouter's `usage.cost`, plotted as a
   score-vs-cost Pareto frontier.
 - The harness never contacts poople.io: the dictionary, daily schedule, and pars are

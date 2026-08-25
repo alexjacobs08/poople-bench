@@ -152,8 +152,9 @@ footer a, header a { color: var(--series); }
   <footer>
     <p><b>Method.</b> One-shot, open book: each model receives the day's start word plus the full
     2,398-word legal list (harvested from the game itself) and returns a whole ladder in one
-    response — no tools, no feedback, k=3 trials daily (k=1 for backfilled days), provider-default
-    sampling. "Effort" is the pinned reasoning-effort setting (models without a medium tier run
+    response — no tools, no feedback, provider-default sampling. Daily trials are tiered by cost:
+    cheap models run k=3, expensive ones k=1 (backfilled days k=1 for all); scores average over
+    whatever trials a model ran, and the rolling window accumulates samples either way. "Effort" is the pinned reasoning-effort setting (models without a medium tier run
     their middle one; blank = no reasoning parameter). Score = par ÷ steps for a legal ladder, 0
     for an illegal one; par is verified independently by BFS. Costs are exact per-request charges
     reported by OpenRouter. API failures are excluded from scores. Daily rankings are

@@ -131,7 +131,7 @@ def _day_path(puzzle: Puzzle) -> Path:
 def run_puzzle(
     puzzle: Puzzle,
     models: list[Model],
-    trials: int,
+    trials: int | None,  # None = each model's own roster trial count
     mode: str,
     api_key: str,
     workers: int,
@@ -155,7 +155,10 @@ def run_puzzle(
         (a["model"], a["trial"]) for a in doc["attempts"] if a.get("error") is None
     }
     jobs = [
-        (m, t) for m in models for t in range(trials) if (m.id, t) not in done
+        (m, t)
+        for m in models
+        for t in range(trials if trials is not None else m.trials)
+        if (m.id, t) not in done
     ]
     if not jobs:
         print(f"{puzzle.date} #{puzzle.index} {puzzle.word.upper()}: nothing to do")
@@ -282,7 +285,8 @@ def main() -> None:
 
     daily = sub.add_parser("daily", help="run the daily puzzle")
     daily.add_argument("--date", help="puzzle date YYYY-MM-DD (default: today's puzzle)")
-    daily.add_argument("--trials", type=int, default=3)
+    daily.add_argument("--trials", type=int, default=None,
+                       help="override trials for ALL models (default: per-model roster setting)")
     daily.add_argument("--models", help="comma-separated model ids (default: enabled roster)")
     daily.add_argument("--workers", type=int, default=8)
     daily.add_argument("--timeout", type=float, default=600.0)
