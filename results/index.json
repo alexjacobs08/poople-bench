@@ -405,6 +405,13 @@
    "word": "watt",
    "par": 7,
    "file": "daily/2026-08-31.json"
+  },
+  {
+   "date": "2026-09-01",
+   "index": 383,
+   "word": "naps",
+   "par": 5,
+   "file": "daily/2026-09-01.json"
   }
  ]
 }
