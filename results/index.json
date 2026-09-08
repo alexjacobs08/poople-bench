@@ -426,6 +426,13 @@
    "word": "gist",
    "par": 5,
    "file": "daily/2026-09-07.json"
+  },
+  {
+   "date": "2026-09-08",
+   "index": 390,
+   "word": "news",
+   "par": 6,
+   "file": "daily/2026-09-08.json"
   }
  ]
 }
