@@ -440,6 +440,13 @@
    "word": "fund",
    "par": 5,
    "file": "daily/2026-09-11.json"
+  },
+  {
+   "date": "2026-09-12",
+   "index": 394,
+   "word": "ahem",
+   "par": 8,
+   "file": "daily/2026-09-12.json"
   }
  ]
 }
