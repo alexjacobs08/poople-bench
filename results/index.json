@@ -447,6 +447,13 @@
    "word": "ahem",
    "par": 8,
    "file": "daily/2026-09-12.json"
+  },
+  {
+   "date": "2026-09-13",
+   "index": 395,
+   "word": "paid",
+   "par": 5,
+   "file": "daily/2026-09-13.json"
   }
  ]
 }
