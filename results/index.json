@@ -461,6 +461,13 @@
    "word": "cars",
    "par": 5,
    "file": "daily/2026-09-14.json"
+  },
+  {
+   "date": "2026-09-15",
+   "index": 397,
+   "word": "risk",
+   "par": 6,
+   "file": "daily/2026-09-15.json"
   }
  ]
 }
