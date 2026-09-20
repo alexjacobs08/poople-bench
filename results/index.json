@@ -496,6 +496,13 @@
    "word": "fans",
    "par": 5,
    "file": "daily/2026-09-19.json"
+  },
+  {
+   "date": "2026-09-20",
+   "index": 402,
+   "word": "away",
+   "par": 6,
+   "file": "daily/2026-09-20.json"
   }
  ]
 }
