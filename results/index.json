@@ -503,6 +503,13 @@
    "word": "away",
    "par": 6,
    "file": "daily/2026-09-20.json"
+  },
+  {
+   "date": "2026-09-21",
+   "index": 403,
+   "word": "pets",
+   "par": 5,
+   "file": "daily/2026-09-21.json"
   }
  ]
 }
