@@ -510,6 +510,13 @@
    "word": "pets",
    "par": 5,
    "file": "daily/2026-09-21.json"
+  },
+  {
+   "date": "2026-09-22",
+   "index": 404,
+   "word": "when",
+   "par": 6,
+   "file": "daily/2026-09-22.json"
   }
  ]
 }
