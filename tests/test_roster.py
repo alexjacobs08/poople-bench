@@ -6,12 +6,13 @@ from poople_bench.game import load_words
 from poople_bench.prompt import PROMPT_VERSION, build_prompt
 from poople_bench.roster import MODELS, enabled_models
 
-SNAPSHOT = Path(__file__).parent.parent / "research/data/openrouter_models_2026-08-23.json"
+SNAPSHOT = Path(__file__).parent.parent / "research/data/openrouter_models_2026-09-25.json"
 
 
 def test_all_roster_ids_exist_in_catalog():
     catalog = {m["id"] for m in json.loads(SNAPSHOT.read_text())["data"]}
-    missing = [m.id for m in MODELS if m.id not in catalog]
+    # Disabled models may have been delisted; that is usually why they are off.
+    missing = [m.id for m in MODELS if m.enabled and m.id not in catalog]
     assert missing == []
 
 

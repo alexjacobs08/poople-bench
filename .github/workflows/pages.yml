@@ -31,6 +31,8 @@ jobs:
           mkdir -p _site/results
           cp site/index.html _site/
           cp -r results/daily results/leaderboard.json results/index.json _site/results/
+          # The Jev track is optional; the dashboard hides its card when absent.
+          cp results/jev_leaderboard.json _site/results/ 2>/dev/null || true
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

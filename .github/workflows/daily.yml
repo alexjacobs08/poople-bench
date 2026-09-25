@@ -34,6 +34,19 @@ jobs:
         run: uv run poople-bench daily
       - name: Aggregate leaderboard
         run: uv run poople-bench aggregate
+      # Jev track (docs/superpowers/specs/2026-09-25-jev-track-design.md). Separate
+      # from the one-shot benchmark, TypeSafe key only, never allowed to fail the run.
+      - name: Run Jev track
+        continue-on-error: true
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+        run: |
+          if [ -z "$TYPESAFE_API_KEY" ]; then
+            echo "::warning::TYPESAFE_API_KEY not set - skipping the Jev track"
+            exit 0
+          fi
+          uv run poople-bench jev
+          uv run poople-bench jev-aggregate
       - name: Commit results
         run: |
           git config user.name "poople-bench-bot"

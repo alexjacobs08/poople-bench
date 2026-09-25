@@ -15,9 +15,11 @@ import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
+from typing import Any
 
 import httpx
 
+from .choosers import JevJudge
 from .client import ApiError, Attempt, call_openrouter, extract_response
 from .game import (
     Puzzle,
@@ -30,23 +32,33 @@ from .game import (
 )
 from .parse import parse_ladder
 from .prompt import PROMPT_VERSION, build_prompt
-from .roster import Model, enabled_models, model_by_id
+from .roster import JEV, Model, enabled_models, model_by_id
+from .scaffold import Run, play
+from .scaffold_score import aggregate_scaffold
 from .score import aggregate, score_ladder
 
 RESULTS_DIR = Path("results")
 DAILY_DIR = RESULTS_DIR / "daily"
+JEV_DIR = RESULTS_DIR / "jev"
 
 
-def _load_env_key() -> str:
-    if key := os.environ.get("OPENROUTER_API_KEY"):
+def load_env_key(name: str, required: bool = True) -> str | None:
+    """Read an API key from the process environment, falling back to .env."""
+    if key := os.environ.get(name):
         return key
     env = Path(".env")
     if env.exists():
         for line in env.read_text().splitlines():
-            name, _, value = line.strip().partition("=")
-            if name == "OPENROUTER_API_KEY" and value:
+            key_name, _, value = line.strip().partition("=")
+            if key_name == name and value:
                 return value
-    sys.exit("OPENROUTER_API_KEY not set (env or .env)")
+    if required:
+        sys.exit(f"{name} not set (env or .env)")
+    return None
+
+
+def _load_env_key() -> str:
+    return load_env_key("OPENROUTER_API_KEY")
 
 
 def stratified_sample(
@@ -279,6 +291,88 @@ def _select_models(spec: str | None) -> list[Model]:
     return [model_by_id(model_id.strip()) for model_id in spec.split(",")]
 
 
+def run_to_record(
+    puzzle: Puzzle, run: Run, trial: int, with_word_list: bool, judge: JevJudge
+) -> dict[str, Any]:
+    return {
+        "model": JEV.id,
+        "served_by": judge.served_by,
+        "label": JEV.label,
+        "lab": JEV.lab,
+        "with_word_list": with_word_list,
+        "date": puzzle.date.isoformat(),
+        "index": puzzle.index,
+        "start_word": puzzle.word,
+        "par": puzzle.par,
+        "trial": trial,
+        "requests": judge.requests,
+        "input_tokens": judge.input_tokens,
+        "cost": judge.cost,
+        **run.model_dump(exclude={"start_word", "par"}),
+    }
+
+
+def pending_trials(
+    done_records: list[dict[str, Any]], trials: int, with_word_list: bool
+) -> list[int]:
+    """Trials still to run. Withholding the word list is a separate experiment,
+    so it gets its own trial slots."""
+    done = {(r["trial"], r.get("with_word_list", True)) for r in done_records}
+    return [t for t in range(trials) if (t, with_word_list) not in done]
+
+
+def run_jev_day(
+    puzzle: Puzzle, trials: int, key: str, with_word_list: bool, max_strikes: int
+) -> None:
+    path = JEV_DIR / f"{puzzle.date.isoformat()}.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    doc = (
+        json.loads(path.read_text())
+        if path.exists()
+        else {"date": puzzle.date.isoformat(), "index": puzzle.index,
+              "word": puzzle.word, "par": puzzle.par, "runs": []}
+    )
+    todo = pending_trials(doc["runs"], trials, with_word_list)
+    if not todo:
+        print(f"{puzzle.date} #{puzzle.index} {puzzle.word.upper()}: nothing to do")
+        return
+    words = load_words()
+    for trial in todo:
+        with httpx.Client() as client:
+            judge = JevJudge(api_key=key, client=client,
+                             word_list=sorted(words) if with_word_list else None)
+            try:
+                run = play(puzzle.word, puzzle.par, judge, words, max_strikes=max_strikes)
+            except Exception as exc:  # noqa: BLE001 - one failed run must not kill the day
+                print(f"  {puzzle.date} t{trial} FAILED {exc!r}"[:160])
+                continue
+        doc["runs"].append(run_to_record(puzzle, run, trial, with_word_list, judge))
+        doc["runs"].sort(key=lambda r: (not r.get("with_word_list", True), r["trial"]))
+        path.write_text(json.dumps(doc, indent=1))
+        status = (f"solved {run.steps} steps (par {puzzle.par})" if run.solved
+                  else f"failed:{run.failure}")
+        print(f"  {puzzle.date} {puzzle.word.upper()} t{trial} {status:26s} "
+              f"strikes={run.strikes:<2d} requests={judge.requests:<3d} ${judge.cost:.4f}")
+
+
+def cmd_jev(args: argparse.Namespace) -> None:
+    end = datetime.date.fromisoformat(args.date) if args.date else current_puzzle_date()
+    dates = [end - datetime.timedelta(days=i) for i in range(args.days)][::-1]
+    key = load_env_key("TYPESAFE_API_KEY")
+    trials = args.trials if args.trials is not None else JEV.trials
+    for d in dates:
+        run_jev_day(puzzle_for_date(d), trials, key, not args.no_word_list, args.max_strikes)
+
+
+def cmd_jev_aggregate(_: argparse.Namespace) -> None:
+    runs = [r for p in sorted(JEV_DIR.glob("*.json")) for r in json.loads(p.read_text())["runs"]]
+    RESULTS_DIR.mkdir(exist_ok=True)
+    (RESULTS_DIR / "jev_leaderboard.json").write_text(
+        json.dumps(aggregate_scaffold(runs, load_words()), indent=1)
+    )
+    print(f"aggregated {len(runs)} Jev runs -> results/jev_leaderboard.json")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="poople-bench")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -304,6 +398,18 @@ def main() -> None:
 
     agg = sub.add_parser("aggregate", help="rebuild leaderboard.json + index.json")
     agg.set_defaults(func=cmd_aggregate)
+
+    jev = sub.add_parser("jev", help="Jev track: play the puzzle through three small questions per turn")
+    jev.add_argument("--date", help="last puzzle date YYYY-MM-DD (default: today's puzzle)")
+    jev.add_argument("--days", type=int, default=1, help="play this many days ending at --date")
+    jev.add_argument("--trials", type=int, default=None, help=f"default {JEV.trials}")
+    jev.add_argument("--max-strikes", type=int, default=10)
+    jev.add_argument("--no-word-list", action="store_true",
+                     help="ablation: Jev judges legality from its own vocabulary")
+    jev.set_defaults(func=cmd_jev)
+
+    jev_agg = sub.add_parser("jev-aggregate", help="rebuild results/jev_leaderboard.json")
+    jev_agg.set_defaults(func=cmd_jev_aggregate)
 
     verify = sub.add_parser("verify-data", help="re-verify packaged game data")
     verify.set_defaults(func=cmd_verify_data)

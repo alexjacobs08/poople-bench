@@ -142,6 +142,27 @@ footer a, header a { color: var(--series); }
     </table></div>
   </section>
 
+  <section class="card" id="jev-card" hidden>
+    <h2>Jev track</h2>
+    <p class="note">A <b>separate experiment, not the benchmark above.</b>
+      <a href="https://typesafe.ai/blog/introducing-system-one-models-and-jev">Jev</a> is a classifier: it
+      answers typed questions and cannot write a ladder. Here it plays one rung at a time through three
+      small questions per turn: is each nearby string a word, which follow-up word looks most like POOP,
+      and which move to take. Code only spells strings out and keeps the books; it never looks a word up
+      to decide anything and never counts letters for the model. The <b>Reference</b> rows are scripts
+      playing the same puzzles with the true word list, so Jev's number has something to stand against.</p>
+    <p class="note" id="jev-summary"></p>
+    <div class="tablebox"><table id="jev-board">
+      <thead><tr></tr></thead>
+      <tbody></tbody>
+    </table></div>
+    <p class="note"><b>Strict</b> scores par ÷ steps and 0 for a game with any rejected guess, the same
+      rule as the main board. <b>Assisted</b> forgives rejected guesses. <b>Right call</b> is how often the
+      move was on a shortest path when the choice mattered. <b>Similarity</b> is how often Jev's pick of
+      the most POOP-like follow-up word was correct. <b>Legality errors</b> is the share of word-or-not
+      calls Jev got wrong.</p>
+  </section>
+
   <section class="card">
     <h2>Daily results</h2>
     <p class="note">Every attempt for one puzzle day, with the ladders models actually produced.</p>
@@ -404,6 +425,34 @@ async function drawDay(file) {
   }
 }
 
+const JEV_COLS = [
+  { label: "Player", str: true, get: x => x.label,
+    cell: x => x.kind === "baseline" ? `<span style="color:var(--muted)">${x.label}</span>`
+      : `<b>${x.label}</b>${x.with_word_list === false ? " <i>(no word list)</i>" : ""}` },
+  { label: "Strict", get: x => x.mean_strict, cell: x => `<b>${x.mean_strict.toFixed(3)}</b>` },
+  { label: "Assisted", get: x => x.mean_assisted, cell: x => x.mean_assisted.toFixed(3) },
+  { label: "Solved", get: x => x.solve_rate, cell: x => fmt.pct(x.solve_rate) },
+  { label: "At par", get: x => x.at_par_rate, cell: x => fmt.pct(x.at_par_rate) },
+  { label: "Right call", get: x => x.right_call_rate, cell: x => x.right_call_rate == null ? "—" : fmt.pct(x.right_call_rate) },
+  { label: "Similarity", get: x => x.similarity_accuracy, cell: x => x.similarity_accuracy == null ? "—" : fmt.pct(x.similarity_accuracy) },
+  { label: "Legality errors", get: x => x.legality_error_rate, cell: x => x.legality_error_rate == null ? "—" : (x.legality_error_rate * 100).toFixed(2) + "%" },
+  { label: "$/puzzle", get: x => x.cost_per_puzzle, cell: x => x.cost_per_puzzle == null ? "free" : fmt.cost(x.cost_per_puzzle) },
+  { label: "Puzzles", get: x => x.n_puzzles, cell: x => String(x.n_puzzles) },
+];
+
+function drawJev(jev) {
+  if (!jev || !jev.rows.length) return;
+  document.getElementById("jev-card").hidden = false;
+  document.querySelector("#jev-board thead tr").innerHTML =
+    "<th>#</th>" + JEV_COLS.map(c => `<th>${c.label}</th>`).join("");
+  document.querySelector("#jev-board tbody").innerHTML = jev.rows.map((r, i) =>
+    `<tr><td>${i + 1}</td>${JEV_COLS.map(c => `<td>${c.cell(r)}</td>`).join("")}</tr>`).join("");
+  const days = jev.dates;
+  document.getElementById("jev-summary").textContent =
+    `${jev.n_runs} Jev games over ${days.length} puzzle days (${days[0]} to ${days[days.length - 1]}). ` +
+    `Script rows average ${jev.baseline_seeds} seeded games per puzzle.`;
+}
+
 async function main() {
   [board, manifest] = await Promise.all([
     fetch("results/leaderboard.json").then(r => r.json()),
@@ -430,6 +479,8 @@ async function main() {
     }));
   drawScatter(); drawBoard();
   if (today) drawDay(today.file);
+  // The Jev track is optional: the dashboard predates it and hides the card without it.
+  fetch("results/jev_leaderboard.json").then(r => r.ok ? r.json() : null).then(drawJev).catch(() => {});
 }
 main();
 </script>

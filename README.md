@@ -46,10 +46,42 @@ ladders); `results/leaderboard.json` powers the dashboard. A GitHub Actions cron
 the daily puzzle at 08:20 UTC (20 minutes after the puzzle flips) and redeploys the
 dashboard.
 
+## Jev track
+
+A **separate experiment**, never a row on the one-shot leaderboard.
+
+[Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev) is TypeSafe's "System
+One" model: it answers typed questions (`choice`, `score`, `noul`) with a probability
+distribution and cannot generate text, so it cannot write a ladder. It plays one rung at a
+time through three small questions per turn:
+
+1. **Is it a word?** One yes/no per nearby string, for the current word's 100 one-letter
+   changes and for the changes to every word it approves. The goal is never mentioned here.
+2. **Which follow-up looks most like POOP?** One choice per approved move.
+3. **Which move?** One choice over the approved moves, each described in words by the word
+   it makes and the follow-up Jev picked in step 2.
+
+Code only does mechanics: it spells strings out, applies the move and refuses to reuse a
+word. It never looks a word up to decide anything, never counts letters for the model and
+never searches. The design and the dead ends behind it are in `research/JEV.md`.
+
+```bash
+echo "TYPESAFE_API_KEY=..." >> .env
+uv run poople-bench jev                  # today's puzzle, 3 games
+uv run poople-bench jev --days 30        # backtest the last 30 daily puzzles
+uv run poople-bench jev --no-word-list   # ablation: legality from Jev's own vocabulary
+uv run poople-bench jev-aggregate        # rebuild results/jev_leaderboard.json
+```
+
+The headline is **strict** (par / steps, 0 for any rejected guess, the main board's rule).
+Every Jev row is published beside three **reference scripts** that play the same puzzles
+with the true word list: random, and letter matching that looks one or two moves ahead.
+Jev's number only means something against them.
+
 ## Repo map
 
 - `src/poople_bench/` — harness (game logic, prompt, OpenRouter client, scoring, CLI)
 - `results/` — all attempts + aggregated leaderboard (committed daily)
 - `site/` — static dashboard
 - `research/` — how the game works, extracted data, design notes
-- `docs/superpowers/` — design spec and implementation plan
+- `docs/superpowers/` — design specs and implementation plans
