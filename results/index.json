@@ -538,6 +538,13 @@
    "word": "funk",
    "par": 5,
    "file": "daily/2026-09-25.json"
+  },
+  {
+   "date": "2026-09-26",
+   "index": 408,
+   "word": "yard",
+   "par": 6,
+   "file": "daily/2026-09-26.json"
   }
  ]
 }
