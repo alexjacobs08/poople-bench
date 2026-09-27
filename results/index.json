@@ -545,6 +545,13 @@
    "word": "yard",
    "par": 6,
    "file": "daily/2026-09-26.json"
+  },
+  {
+   "date": "2026-09-27",
+   "index": 409,
+   "word": "rise",
+   "par": 5,
+   "file": "daily/2026-09-27.json"
   }
  ]
 }
