@@ -566,6 +566,13 @@
    "word": "pain",
    "par": 5,
    "file": "daily/2026-09-29.json"
+  },
+  {
+   "date": "2026-09-30",
+   "index": 412,
+   "word": "gage",
+   "par": 6,
+   "file": "daily/2026-09-30.json"
   }
  ]
 }
