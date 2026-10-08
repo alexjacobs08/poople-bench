@@ -594,6 +594,13 @@
    "word": "card",
    "par": 5,
    "file": "daily/2026-10-07.json"
+  },
+  {
+   "date": "2026-10-08",
+   "index": 420,
+   "word": "omen",
+   "par": 9,
+   "file": "daily/2026-10-08.json"
   }
  ]
 }
