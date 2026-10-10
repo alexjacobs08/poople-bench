@@ -608,6 +608,13 @@
    "word": "carb",
    "par": 5,
    "file": "daily/2026-10-09.json"
+  },
+  {
+   "date": "2026-10-10",
+   "index": 422,
+   "word": "gems",
+   "par": 6,
+   "file": "daily/2026-10-10.json"
   }
  ]
 }
