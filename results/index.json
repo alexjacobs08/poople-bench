@@ -615,6 +615,13 @@
    "word": "gems",
    "par": 6,
    "file": "daily/2026-10-10.json"
+  },
+  {
+   "date": "2026-10-11",
+   "index": 423,
+   "word": "tips",
+   "par": 5,
+   "file": "daily/2026-10-11.json"
   }
  ]
 }

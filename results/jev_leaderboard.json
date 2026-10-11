@@ -1,6 +1,6 @@
 {
- "generated_at": "2026-10-10T14:44:01.356765+00:00",
- "n_runs": 123,
+ "generated_at": "2026-10-11T15:55:48.720577+00:00",
+ "n_runs": 126,
  "dates": [
   "2026-08-27",
   "2026-08-28",
@@ -42,7 +42,8 @@
   "2026-10-07",
   "2026-10-08",
   "2026-10-09",
-  "2026-10-10"
+  "2026-10-10",
+  "2026-10-11"
  ],
  "baseline_seeds": 20,
  "rows": [
@@ -53,12 +54,12 @@
    "lab": "Reference",
    "depth": 2,
    "with_word_list": true,
-   "n_runs": 820,
-   "n_puzzles": 41,
-   "mean_strict": 0.7377782501547887,
-   "mean_assisted": 0.7377782501547887,
-   "solve_rate": 0.9365853658536586,
-   "at_par_rate": 0.348780487804878
+   "n_runs": 840,
+   "n_puzzles": 42,
+   "mean_strict": 0.7338350524645306,
+   "mean_assisted": 0.7338350524645306,
+   "solve_rate": 0.9380952380952381,
+   "at_par_rate": 0.3404761904761905
   },
   {
    "kind": "model",
@@ -66,18 +67,18 @@
    "label": "Jev 1.13",
    "lab": "TypeSafe",
    "with_word_list": true,
-   "n_runs": 123,
-   "n_puzzles": 41,
-   "mean_strict": 0.6191117148434222,
-   "mean_assisted": 0.6349715325325082,
-   "solve_rate": 0.8780487804878049,
-   "at_par_rate": 0.1951219512195122,
-   "mean_strikes": 0.08130081300813008,
-   "right_call_rate": 0.6753488372093023,
-   "similarity_accuracy": 0.8654816424745789,
-   "legality_error_rate": 0.00042268476994608193,
-   "cost_per_puzzle": 0.008565797219512195,
-   "requests_per_puzzle": 41.63414634146341
+   "n_runs": 126,
+   "n_puzzles": 42,
+   "mean_strict": 0.6176156515442229,
+   "mean_assisted": 0.633097854526426,
+   "solve_rate": 0.8809523809523809,
+   "at_par_rate": 0.19047619047619047,
+   "mean_strikes": 0.07936507936507936,
+   "right_call_rate": 0.6754306436990027,
+   "similarity_accuracy": 0.8651439770842756,
+   "legality_error_rate": 0.0004215766968462048,
+   "cost_per_puzzle": 0.008588663333333333,
+   "requests_per_puzzle": 41.70634920634921
   },
   {
    "kind": "baseline",
@@ -86,12 +87,12 @@
    "lab": "Reference",
    "depth": 1,
    "with_word_list": true,
-   "n_runs": 820,
-   "n_puzzles": 41,
-   "mean_strict": 0.483239398088592,
-   "mean_assisted": 0.483239398088592,
-   "solve_rate": 0.7195121951219512,
-   "at_par_rate": 0.10853658536585366
+   "n_runs": 840,
+   "n_puzzles": 42,
+   "mean_strict": 0.47719483752381253,
+   "mean_assisted": 0.47719483752381253,
+   "solve_rate": 0.7130952380952381,
+   "at_par_rate": 0.10595238095238095
   },
   {
    "kind": "baseline",
@@ -100,8 +101,8 @@
    "lab": "Reference",
    "depth": 0,
    "with_word_list": true,
-   "n_runs": 820,
-   "n_puzzles": 41,
+   "n_runs": 840,
+   "n_puzzles": 42,
    "mean_strict": 0.0,
    "mean_assisted": 0.0,
    "solve_rate": 0.0,
