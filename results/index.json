@@ -629,6 +629,13 @@
    "word": "wavy",
    "par": 7,
    "file": "daily/2026-10-12.json"
+  },
+  {
+   "date": "2026-10-13",
+   "index": 425,
+   "word": "tiny",
+   "par": 6,
+   "file": "daily/2026-10-13.json"
   }
  ]
 }
